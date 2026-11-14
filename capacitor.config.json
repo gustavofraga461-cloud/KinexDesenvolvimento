@@ -1,0 +1,8 @@
+{
+  "appId": "com.kinexdesenvolvimento.pizzariademo",
+  "appName": "Kinex Pizzaria Demo",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
