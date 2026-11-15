@@ -23,7 +23,7 @@ git add .
 echo "📝 Mensagem do commit (Enter para usar a padrão):"
 read -r MSG
 if [ -z "$MSG" ]; then
-  MSG="Kinex Desenvolvimento - Build APK Demo Pizzaria"
+  MSG="Morumba Lanches - Atualização do cardápio"
 fi
 
 git commit -m "$MSG"

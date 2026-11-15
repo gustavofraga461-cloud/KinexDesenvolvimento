@@ -1,25 +1,21 @@
-# Kinex Desenvolvimento — Demo de Cardápio para Pizzaria
+# Morumba Lanches — Cardápio Digital de Demonstração
 
-Aplicativo demonstrativo desenvolvido pela Kinex Desenvolvimento para apresentar a clientes um fluxo de cardápio, sacola, escolha de pagamento e confirmação de pedido.
+Aplicativo de demonstração personalizado com o cardápio informado pelo MORUMBA LANCHES. Desenvolvido pela Kinex Desenvolvimento.
 
-> **Atenção:** o PIX e a confirmação do pedido são simulados. Este projeto não processa pagamentos reais nem envia pedidos para uma pizzaria.
+## Observações importantes
 
-## Gerar o APK pelo Termux usando GitHub Actions
+- Os preços de pastéis salgados e sucos foram informados como faixas; o aplicativo exibe um valor inicial de referência e avisa para confirmar o preço do sabor.
+- A taxa de entrega não foi informada e aparece como “a combinar”.
+- PIX e cartão são apenas demonstrativos. Não faça pagamentos pelo código de teste e não informe dados reais de cartão.
+- O pedido ainda não é gravado em um banco de dados nem enviado automaticamente ao WhatsApp. O contato da lanchonete está disponível no cabeçalho.
 
-1. Extraia este ZIP diretamente em uma pasta, por exemplo `~/kinex-pizzaria-demo`.
-2. No Termux, entre na pasta do projeto:
+## Atualizar o projeto já enviado ao GitHub pelo Termux
 
-```bash
-cd ~/kinex-pizzaria-demo
-pkg update -y
-pkg install git -y
-chmod +x push.sh
-./push.sh
-```
+1. Baixe o ZIP atualizado e extraia os arquivos por cima da pasta `~/kinex-pizzaria-demo`, sem apagar a pasta oculta `.git`.
+2. No Termux: `cd ~/kinex-pizzaria-demo`
+3. Execute `git add .`
+4. Execute `git commit -m "Personaliza cardapio Morumba Lanches"`
+5. Execute `git push`
+6. Abra o GitHub Actions e aguarde a nova compilação.
 
-3. Quando solicitado, informe a URL HTTPS do seu repositório GitHub vazio (por exemplo, `https://github.com/SEU-USUARIO/kinex-pizzaria-demo.git`).
-4. Se o GitHub pedir autenticação, use um método/token autorizado pelo GitHub; a senha normal da conta não funciona para `git push` por HTTPS.
-5. No GitHub, abra **Actions** e aguarde o workflow **Build Android APK - Kinex Desenvolvimento** terminar.
-6. Abra a execução concluída e baixe o artefato **Kinex-Desenvolvimento-Pizzaria-Demo-APK**. Dentro dele estará `app-debug.apk`.
-
-O APK gerado é de demonstração/debug, adequado para instalar e apresentar em um aparelho Android. Para distribuição pública, será necessário preparar uma versão assinada de release.
+O APK de demonstração/debug pode ser instalado em um Android para apresentação. Para distribuição pública, será necessário preparar uma versão assinada de release.

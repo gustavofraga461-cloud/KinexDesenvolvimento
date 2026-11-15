@@ -7,7 +7,7 @@ import {
 import { CATEGORIES, MENU_ITEMS, BORDERS } from './data/menuData';
 
 export default function App() {
-  const [selectedCategory, setSelectedCategory] = useState('pizzas');
+  const [selectedCategory, setSelectedCategory] = useState('lanches');
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -21,12 +21,11 @@ export default function App() {
   const [address, setAddress] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('pix');
-  const [cardData, setCardData] = useState({ number: '', name: '', expiry: '', cvv: '' });
   const [changeFor, setChangeFor] = useState('');
   const [pixCopied, setPixCopied] = useState(false);
   const [orderNumber, setOrderNumber] = useState(null);
 
-  const deliveryFee = deliveryType === 'delivery' ? 6.00 : 0;
+  const deliveryFee = 0; // Taxa de entrega ainda não informada pela lanchonete.
 
   const filteredItems = useMemo(() => {
     return MENU_ITEMS.filter((item) => {
@@ -39,13 +38,7 @@ export default function App() {
   }, [selectedCategory, searchQuery]);
 
   const handleOpenItem = (item) => {
-    if (item.category === 'pizzas' || item.category === 'doces') {
-      setCustomizingItem(item);
-      setSelectedBorder(BORDERS[0]);
-      setItemObservation('');
-    } else {
-      addToCart(item, null, '');
-    }
+    addToCart(item, null, '');
   };
 
   const addToCart = (item, border, observation) => {
@@ -114,14 +107,6 @@ export default function App() {
     if (deliveryType === 'delivery') {
       setAddress('Av. Paulista, 1000 - Apto 42');
     }
-    if (paymentMethod === 'credit') {
-      setCardData({
-        number: '4532 0151 1283 0366',
-        name: 'CLIENTE DEMO KINEX',
-        expiry: '12/29',
-        cvv: '888'
-      });
-    }
   };
 
   const handleFinishOrder = () => {
@@ -131,10 +116,6 @@ export default function App() {
     }
     if (deliveryType === 'delivery' && !address.trim()) {
       alert('Por favor, informe o endereço de entrega.');
-      return;
-    }
-    if (paymentMethod === 'credit' && (cardData.number.length < 12 || !cardData.name)) {
-      alert('Preencha os dados do cartão corretamente.');
       return;
     }
 
@@ -167,26 +148,29 @@ export default function App() {
         </span>
       </div>
 
-      <header className="bg-red-700 text-white pt-5 pb-5 px-4 rounded-b-3xl shadow-md sticky top-0 z-20">
+      <header className="bg-zinc-950 text-white pt-5 pb-5 px-4 rounded-b-3xl shadow-md sticky top-0 z-20 border-b-4 border-red-700">
         <div className="flex items-center justify-between mb-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-2xl">🍕</span>
+              <span className="text-2xl">🍔</span>
               <div>
-                <h1 className="text-xl font-extrabold tracking-tight leading-none">
-                  Pizzaria Modelo
+                <h1 className="morumba-logo text-2xl font-black tracking-tight leading-none">
+                  MORUMBA LANCHES
                 </h1>
-                <p className="text-[11px] text-red-200 font-medium mt-0.5">
-                  App White-Label • Kinex Desenvolvimento
+                <p className="text-[11px] text-zinc-300 font-semibold mt-1">
+                  O Melhor Lanche está Aqui 👊
                 </p>
+                <a href="https://wa.me/5519992625518" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11px] text-green-300 font-bold mt-1">
+                  WhatsApp: (19) 9 9262-5518
+                </a>
               </div>
             </div>
-            <div className="flex items-center gap-3 text-xs text-red-100 mt-2">
+            <div className="flex items-center gap-3 text-xs text-zinc-200 mt-2">
               <span className="flex items-center gap-1 bg-green-600/90 text-white px-2 py-0.5 rounded-full font-medium">
-                ● Aberto
+                ● Consulte
               </span>
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5" /> 35-50 min
+                <Clock className="w-3.5 h-3.5" /> Consulte o prazo
               </span>
             </div>
           </div>
@@ -209,7 +193,7 @@ export default function App() {
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-3" />
           <input
             type="text"
-            placeholder="Buscar pizza, porção ou bebida..."
+            placeholder="Buscar lanche, pastel, porção ou bebida..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-white text-stone-800 placeholder-stone-400 text-sm rounded-xl pl-10 pr-8 py-2.5 focus:outline-none shadow-inner"
@@ -287,7 +271,11 @@ export default function App() {
                 </p>
                 <div className="flex items-center justify-between mt-2.5">
                   <span className="font-extrabold text-red-700 text-sm">
-                    {formatPrice(item.price)}
+                    {item.id.startsWith('ps-') && !['ps-tudao', 'ps-pastelzao', 'ps-mini'].includes(item.id)
+                      ? 'R$ 13,00–18,00'
+                      : item.name.startsWith('Suco de ')
+                      ? 'R$ 10,00–12,00'
+                      : formatPrice(item.price)}
                   </span>
                   <button
                     type="button"
@@ -426,7 +414,7 @@ export default function App() {
                   {checkoutStep === 'success' && 'Pedido Confirmado!'}
                 </h3>
                 <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
-                  Kinex Desenvolvimento • Simulação
+                  Morumba Lanches • Demonstração
                 </span>
               </div>
               <button
@@ -444,7 +432,7 @@ export default function App() {
                     <div className="text-center py-16 text-stone-400">
                       <ShoppingBag className="w-12 h-12 mx-auto mb-3 opacity-30" />
                       <p className="font-medium">Sua sacola está vazia</p>
-                      <p className="text-xs mt-1">Escolha pizzas ou porções para testar o pedido!</p>
+                      <p className="text-xs mt-1">Escolha lanches, porções, pastéis ou bebidas para testar o pedido!</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -503,7 +491,7 @@ export default function App() {
                                 : 'border-stone-200 text-stone-600'
                             }`}
                           >
-                            <MapPin className="w-4 h-4" /> Entrega ({formatPrice(6)})
+                            <MapPin className="w-4 h-4" /> Entrega (a combinar)
                           </button>
                           <button
                             onClick={() => setDeliveryType('pickup')}
@@ -525,7 +513,7 @@ export default function App() {
                         </div>
                         <div className="flex justify-between text-stone-500">
                           <span>Taxa de Entrega</span>
-                          <span>{deliveryFee === 0 ? 'Grátis' : formatPrice(deliveryFee)}</span>
+                          <span>{deliveryType === 'delivery' ? 'A combinar' : 'Grátis'}</span>
                         </div>
                         <div className="flex justify-between font-extrabold text-stone-900 text-base pt-2 border-t border-stone-200">
                           <span>Total</span>
@@ -602,7 +590,7 @@ export default function App() {
                             : 'border-stone-200 text-stone-600'
                         }`}
                       >
-                        <CreditCard className="w-5 h-5" /> Cartão no App
+                        <CreditCard className="w-5 h-5" /> Cartão (demonstração)
                       </button>
                       <button
                         onClick={() => setPaymentMethod('cash')}
@@ -620,7 +608,7 @@ export default function App() {
                   {paymentMethod === 'pix' && (
                     <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 text-center space-y-3">
                       <p className="text-xs font-semibold text-emerald-900">
-                        Escaneie o QR Code ou copie a chave PIX abaixo para pagar{' '}
+                        Pagamento demonstrativo. Não realize transferência; o código PIX abaixo é fictício. Valor simulado:{' '}
                         <strong>{formatPrice(total)}</strong>
                       </p>
                       <div className="bg-white p-3 rounded-xl inline-block shadow-sm border border-emerald-100">
@@ -637,7 +625,7 @@ export default function App() {
                           </>
                         ) : (
                           <>
-                            <Copy className="w-4 h-4" /> Copiar Código PIX Copia e Cola
+                            <Copy className="w-4 h-4" /> Copiar código PIX fictício
                           </>
                         )}
                       </button>
@@ -645,40 +633,8 @@ export default function App() {
                   )}
 
                   {paymentMethod === 'credit' && (
-                    <div className="bg-stone-50 border border-stone-200 rounded-2xl p-4 space-y-2.5">
-                      <input
-                        type="text"
-                        maxLength={19}
-                        placeholder="Número do Cartão (0000 0000 0000 0000)"
-                        value={cardData.number}
-                        onChange={(e) => setCardData({ ...cardData, number: e.target.value })}
-                        className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Nome impresso no cartão"
-                        value={cardData.name}
-                        onChange={(e) => setCardData({ ...cardData, name: e.target.value })}
-                        className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        <input
-                          type="text"
-                          maxLength={5}
-                          placeholder="Validade (MM/AA)"
-                          value={cardData.expiry}
-                          onChange={(e) => setCardData({ ...cardData, expiry: e.target.value })}
-                          className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                        />
-                        <input
-                          type="password"
-                          maxLength={4}
-                          placeholder="CVV"
-                          value={cardData.cvv}
-                          onChange={(e) => setCardData({ ...cardData, cvv: e.target.value })}
-                          className="w-full bg-white border border-stone-200 rounded-xl px-3 py-2 text-sm"
-                        />
-                      </div>
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-900">
+                      Esta é uma demonstração. Não informe dados reais de cartão: nenhuma transação será processada.
                     </div>
                   )}
 
@@ -702,9 +658,9 @@ export default function App() {
               {checkoutStep === 'processing' && (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                   <div className="w-12 h-12 border-4 border-red-700 border-t-transparent rounded-full animate-spin mb-4" />
-                  <p className="font-bold text-stone-800">Validando pagamento...</p>
+                  <p className="font-bold text-stone-800">Concluindo demonstração...</p>
                   <p className="text-xs text-stone-400 mt-1">
-                    Simulando aprovação em tempo real...
+                    Nenhuma cobrança real será realizada.
                   </p>
                 </div>
               )}
@@ -717,19 +673,19 @@ export default function App() {
                       Pedido #{orderNumber} • Simulação Concluída
                     </span>
                     <h4 className="text-xl font-extrabold text-stone-800 mt-3">
-                      Recebemos seu pedido, {customerName}!
+                      Pedido de demonstração, {customerName}!
                     </h4>
                     <p className="text-xs text-stone-500 mt-1 max-w-xs mx-auto">
-                      Fluxo completo concluído com sucesso. Tempo estimado: 35 a 50 minutos.
+                      Pedido de demonstração registrado nesta tela. Prazo e disponibilidade devem ser confirmados diretamente com a lanchonete.
                     </p>
                   </div>
                   <div className="bg-stone-50 p-4 rounded-2xl text-left text-xs space-y-1.5 border border-stone-100">
                     <p>
                       <strong>Pagamento:</strong>{' '}
                       {paymentMethod === 'pix'
-                        ? 'PIX Aprovado'
+                        ? 'PIX demonstrativo (não pago)'
                         : paymentMethod === 'credit'
-                        ? 'Cartão de Crédito Aprovado'
+                        ? 'Cartão demonstrativo (não processado)'
                         : `Dinheiro (${changeFor || 'Sem troco'})`}
                     </p>
                     <p>

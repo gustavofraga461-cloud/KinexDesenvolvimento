@@ -1,6 +1,6 @@
 {
-  "appId": "com.kinexdesenvolvimento.pizzariademo",
-  "appName": "Kinex Pizzaria Demo",
+  "appId": "com.kinex.morumbalanches",
+  "appName": "Morumba Lanches",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

@@ -1,142 +1,93 @@
+const image = {
+  burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=85',
+  hotdog: 'https://images.unsplash.com/photo-1612392062631-94dd858cba88?auto=format&fit=crop&w=700&q=85',
+  sandwich: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=700&q=85',
+  fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=700&q=85',
+  sausage: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=700&q=85',
+  pastry: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=85',
+  sweet: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=700&q=85',
+  soda: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=700&q=85',
+  juice: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=700&q=85',
+  beer: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=700&q=85'
+};
+
 export const CATEGORIES = [
-  { id: 'pizzas', name: 'Pizzas Tradicionais', emoji: '🍕' },
-  { id: 'doces', name: 'Pizzas Doces', emoji: '🍫' },
-  { id: 'porcoes', name: 'Porções & Entradas', emoji: '🍟' },
+  { id: 'lanches', name: 'Lanches', emoji: '🍔' },
+  { id: 'porcoes', name: 'Porções', emoji: '🍟' },
+  { id: 'pasteis-salgados', name: 'Pastéis salgados', emoji: '🥟' },
+  { id: 'pasteis-doces', name: 'Pastéis doces', emoji: '🍫' },
   { id: 'bebidas', name: 'Bebidas', emoji: '🥤' }
 ];
 
-export const MENU_ITEMS = [
-  {
-    id: 'pz-1',
-    category: 'pizzas',
-    name: 'Calabresa Acebolada',
-    description: 'Molho de tomate artesanal, muçarela derretida, calabresa fatiada defumada, cebola roxa e orégano.',
-    price: 49.90,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pz-2',
-    category: 'pizzas',
-    name: 'Margherita Especial',
-    description: 'Molho de tomate pelati, muçarela fresca, rodelas de tomate italiano, folhas de manjericão fresco e azeite extra virgem.',
-    price: 47.90,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pz-3',
-    category: 'pizzas',
-    name: 'Portuguesa Clássica',
-    description: 'Muçarela, presunto cozido, ovos cozidos, cebola, ervilha fresca, azeitonas pretas e orégano.',
-    price: 54.90,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pz-4',
-    category: 'pizzas',
-    name: 'Frango com Catupiry Original',
-    description: 'Peito de frango desfiado e temperado na casa coberto com legítimo Catupiry cremoso e milho.',
-    price: 55.90,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pz-5',
-    category: 'pizzas',
-    name: 'Quatro Queijos',
-    description: 'Combinação cremosa de muçarela, provolone defumado, parmesão curado e gorgonzola.',
-    price: 56.90,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'dc-1',
-    category: 'doces',
-    name: 'Chocolate com Morango',
-    description: 'Ganache de chocolate meio amargo cremoso, morangos frescos fatiados e raspas de chocolate.',
-    price: 44.90,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'dc-2',
-    category: 'doces',
-    name: 'Banana Nevada',
-    description: 'Banana nanica caramelizada, canela em pó, leite condensado e cobertura de chocolate branco.',
-    price: 42.90,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pr-1',
-    category: 'porcoes',
-    name: 'Batata Frita com Cheddar e Bacon',
-    description: 'Porção generosa (500g) de batatas crocantes cobertas com cheddar cremoso e cubos de bacon frito.',
-    price: 32.90,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pr-2',
-    category: 'porcoes',
-    name: 'Calabresa Acebolada na Chapa',
-    description: '400g de calabresa fatiada acebolada, acompanha cesta de pães fatiados e vinagrete.',
-    price: 36.90,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'pr-3',
-    category: 'porcoes',
-    name: 'Cornicione de Alho e Parmesão',
-    description: 'Tiras de massa de pizza assadas no forno a lenha com manteiga de alho, parmesão e ervas finas.',
-    price: 22.90,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'bb-1',
-    category: 'bebidas',
-    name: 'Coca-Cola 2 Litros',
-    description: 'Garrafa 2L bem gelada.',
-    price: 14.00,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'bb-2',
-    category: 'bebidas',
-    name: 'Guaraná Antarctica 2 Litros',
-    description: 'Garrafa 2L bem gelada.',
-    price: 13.00,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'bb-3',
-    category: 'bebidas',
-    name: 'Suco Natural de Laranja 500ml',
-    description: 'Espremido na hora, 100% fruta sem adição de açúcar.',
-    price: 11.50,
-    popular: false,
-    image: 'https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 'bb-4',
-    category: 'bebidas',
-    name: 'Heineken Long Neck 330ml',
-    description: 'Cerveja puro malte estupidamente gelada.',
-    price: 9.50,
-    popular: true,
-    image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=500&q=80'
-  }
-];
+const products = [
+  ['MISTO', 18, 'Pão, queijo e presunto.', 'sandwich'],
+  ['AMERICANO', 20, 'Lanche estilo americano.', 'sandwich'],
+  ['HOT DOG', 22, 'Cachorro-quente tradicional.', 'hotdog'],
+  ['HOT DOG DUPLO', 24, 'Cachorro-quente duplo.', 'hotdog'],
+  ['X BURGUER', 28, 'Hambúrguer com queijo.', 'burger'],
+  ['X BURGUER DUPLO', 30, 'Dois hambúrgueres com queijo.', 'burger'],
+  ['X FRANGO', 30, 'Lanche de frango.', 'burger'],
+  ['X SALADA', 30, 'Hambúrguer com salada.', 'burger'],
+  ['X BACON', 32, 'Hambúrguer com bacon.', 'burger'],
+  ['X CALABRESA', 32, 'Lanche com calabresa.', 'burger'],
+  ['X EGG', 32, 'Hambúrguer com ovo.', 'burger'],
+  ['X CABURGUER', 32, 'Combinação da casa.', 'burger'],
+  ['X CAFRANGO', 32, 'Combinação de calabresa e frango.', 'burger'],
+  ['X CALAFRANGO', 32, 'Combinação de calabresa e frango.', 'burger'],
+  ['X CALABACON', 32, 'Calabresa com bacon.', 'burger'],
+  ['X FRANBACON', 32, 'Frango com bacon.', 'burger'],
+  ['X CHURRASCO', 35, 'Lanche com carne de churrasco.', 'burger'],
+  ['X FRANBURGUER', 35, 'Combinação de frango e hambúrguer.', 'burger'],
+  ['X TUDO', 40, 'Lanche completo da casa.', 'burger'],
+  ['X TUDO DUPLO', 48, 'Lanche completo em versão dupla.', 'burger'],
+].map(([name, price, description, photo], index) => ({
+  id: `lan-${index + 1}`, category: 'lanches', name, price, description, image: image[photo], popular: index === 4 || index === 18
+}));
 
-export const BORDERS = [
-  { id: 'tradicional', name: 'Borda Tradicional', price: 0 },
-  { id: 'catupiry', name: 'Borda Recheada Catupiry', price: 8.00 },
-  { id: 'cheddar', name: 'Borda Recheada Cheddar', price: 8.00 },
-  { id: 'chocolate', name: 'Borda Doce Chocolate', price: 10.00 }
-];
+const portions = [
+  ['Batata Frita', 24, 'Porção de batata frita.', 'fries'],
+  ['Batata Suprema', 30, 'Batata frita com bacon e cheddar.', 'fries'],
+  ['Batata Mineira', 33, 'Batata frita com bacon e queijo.', 'fries'],
+  ['Calabresa Acebolada', 45, 'Porção de calabresa acebolada.', 'sausage'],
+  ['Contra Filé Acebolado', 55, 'Porção de contra filé acebolado.', 'sausage']
+].map(([name, price, description, photo], index) => ({ id: `por-${index + 1}`, category: 'porcoes', name, price, description, image: image[photo] }));
+
+const savoryPastelFlavors = ['Pizza', 'Queijo', 'Carne', 'Carne com Cheddar', 'Catupiry', 'Calabresa', 'Carne Seca', 'Frango com Catupiry', 'Frango com Cheddar', 'Palmito', '3 Queijos', 'Bacon', 'Brócolis', 'Especial'];
+const savoryPastels = savoryPastelFlavors.map((flavor, index) => ({
+  id: `ps-${index + 1}`, category: 'pasteis-salgados', name: `Pastel de ${flavor}`, price: 13,
+  description: 'Preço informado para demonstração: os sabores variam de R$ 13,00 a R$ 18,00. Confirme o valor do sabor pelo WhatsApp antes de finalizar.', image: image.pastry
+}));
+savoryPastels.push(
+  { id: 'ps-tudao', category: 'pasteis-salgados', name: 'Pastel Tudão', price: 18, description: 'Pastel especial Tudão.', image: image.pastry, popular: true },
+  { id: 'ps-pastelzao', category: 'pasteis-salgados', name: 'Pastelzão', price: 24, description: 'Pastel em tamanho grande.', image: image.pastry },
+  { id: 'ps-mini', category: 'pasteis-salgados', name: 'Mini Pastel (unidade)', price: 2, description: 'Sabores: carne, frango, pizza ou queijo. R$ 2,00 cada.', image: image.pastry }
+);
+
+const sweetPastelFlavors = ['Doce de Leite com Queijo', 'Doce de Leite com Banana', 'Sonho de Valsa', 'Ouro Branco', 'Doce de Leite com Queijo e Romeu e Julieta'];
+const sweetPastels = sweetPastelFlavors.map((flavor, index) => ({
+  id: `pd-${index + 1}`, category: 'pasteis-doces', name: `Pastel doce: ${flavor}`, price: 15,
+  description: 'Pastel doce. Valor informado no cardápio: R$ 15,00.', image: image.sweet
+}));
+
+const drinks = [
+  ['Coca-Cola 2L', 18, 'Refrigerante Coca-Cola, garrafa de 2 litros.', 'soda'],
+  ['Coca-Cola lata', 7, 'Refrigerante Coca-Cola em lata.', 'soda'],
+  ['Coca-Cola mini', 4, 'Refrigerante Coca-Cola mini.', 'soda'],
+  ['Coca-Cola 600ml', 10, 'Refrigerante Coca-Cola 600ml.', 'soda'],
+  ['Suco de Acerola', 10, 'Suco de polpa. O valor pode variar de R$ 10,00 a R$ 12,00 conforme o sabor. Com leite: + R$ 4,00.', 'juice'],
+  ['Suco de Abacaxi', 10, 'Suco de polpa. O valor pode variar de R$ 10,00 a R$ 12,00 conforme o sabor. Com leite: + R$ 4,00.', 'juice'],
+  ['Suco de Laranja', 10, 'Suco de polpa. O valor pode variar de R$ 10,00 a R$ 12,00 conforme o sabor. Com leite: + R$ 4,00.', 'juice'],
+  ['Suco de Maracujá', 10, 'Suco de polpa. O valor pode variar de R$ 10,00 a R$ 12,00 conforme o sabor. Com leite: + R$ 4,00.', 'juice'],
+  ['Suco de Morango', 10, 'Suco de polpa. O valor pode variar de R$ 10,00 a R$ 12,00 conforme o sabor. Com leite: + R$ 4,00.', 'juice'],
+  ['Skol', 6.5, 'Cerveja Skol.', 'beer'],
+  ['Brahma', 6.5, 'Cerveja Brahma.', 'beer'],
+  ['Crystal', 5, 'Cerveja Crystal.', 'beer'],
+  ['Império', 7, 'Cerveja Império.', 'beer'],
+  ['Original', 8, 'Cerveja Original.', 'beer'],
+  ['Heineken', 9, 'Cerveja Heineken.', 'beer']
+].map(([name, price, description, photo], index) => ({ id: `beb-${index + 1}`, category: 'bebidas', name, price, description, image: image[photo] }));
+
+export const MENU_ITEMS = [...products, ...portions, ...savoryPastels, ...sweetPastels, ...drinks];
+
+// Não há adicionais de borda neste cardápio; mantido vazio para compatibilidade com a tela existente.
+export const BORDERS = [{ id: 'tradicional', name: 'Sem adicional', price: 0 }];
