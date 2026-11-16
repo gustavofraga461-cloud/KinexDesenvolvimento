@@ -1,21 +1,51 @@
-# Morumba Lanches — Cardápio Digital de Demonstração
+# MORUMBA LANCHES — versão funcional local (Kinex Desenvolvimento)
 
-Aplicativo de demonstração personalizado com o cardápio informado pelo MORUMBA LANCHES. Desenvolvido pela Kinex Desenvolvimento.
+Aplicativo de demonstração em React + Vite + Capacitor, com área do cliente e painel administrativo no mesmo APK.
 
-## Observações importantes
+## Funções implementadas
 
-- Os preços de pastéis salgados e sucos foram informados como faixas; o aplicativo exibe um valor inicial de referência e avisa para confirmar o preço do sabor.
-- A taxa de entrega não foi informada e aparece como “a combinar”.
-- PIX e cartão são apenas demonstrativos. Não faça pagamentos pelo código de teste e não informe dados reais de cartão.
-- O pedido ainda não é gravado em um banco de dados nem enviado automaticamente ao WhatsApp. O contato da lanchonete está disponível no cabeçalho.
+- Cardápio com categorias, busca, imagens e preços.
+- Carrinho, quantidades, modalidade entrega/retirada e dados do cliente.
+- Registro local de pedidos com número, itens, total, forma de pagamento e status.
+- Painel administrativo protegido por senha de demonstração.
+- Consulta de pedidos e atualização de status.
+- Cadastro, edição e exclusão de produtos.
+- Botão para preparar e encaminhar o pedido pelo WhatsApp da lanchonete (19) 99262-5518.
+- Produtos e pedidos gravados no armazenamento local do aplicativo (localStorage).
 
-## Atualizar o projeto já enviado ao GitHub pelo Termux
+## Acesso ao painel
 
-1. Baixe o ZIP atualizado e extraia os arquivos por cima da pasta `~/kinex-pizzaria-demo`, sem apagar a pasta oculta `.git`.
-2. No Termux: `cd ~/kinex-pizzaria-demo`
-3. Execute `git add .`
-4. Execute `git commit -m "Personaliza cardapio Morumba Lanches"`
-5. Execute `git push`
-6. Abra o GitHub Actions e aguarde a nova compilação.
+Toque em **Painel** na barra superior do cardápio. Senha inicial de demonstração: `1234`. Esta senha está fixa no código (`adminPassword === '1234'`) e deve ser alterada antes de qualquer entrega. Não use esta versão para armazenar dados pessoais reais ou operar uma loja em produção.
 
-O APK de demonstração/debug pode ser instalado em um Android para apresentação. Para distribuição pública, será necessário preparar uma versão assinada de release.
+## Limitações importantes desta versão
+
+- Não há banco de dados ou sincronização entre aparelhos. Pedidos e alterações de produtos existem somente no aparelho onde foram registrados.
+- O WhatsApp é aberto com o pedido formatado; o usuário ainda precisa confirmar o envio na conversa.
+- PIX e cartão são apenas demonstrativos: não existe cobrança, QR Code válido nem confirmação financeira. Não realizar pagamentos usando o código exibido.
+- A taxa de entrega permanece R$ 0,00 porque o estabelecimento ainda não informou o valor.
+- Preços de alguns pastéis salgados e sucos foram fornecidos como faixa; confirmar os valores finais com a lanchonete.
+- O armazenamento local pode ser apagado se os dados do aplicativo forem limpos ou se o app for desinstalado.
+
+## Atualizar o projeto existente pelo Termux
+
+1. Baixe o ZIP atualizado e extraia por cima da pasta `~/kinex-pizzaria-demo`, mantendo a pasta oculta `.git`.
+2. Execute:
+
+```bash
+cd ~/kinex-pizzaria-demo
+git add .
+git commit -m "Adiciona painel local e pedidos funcionais"
+git branch -M main
+git push -u origin main
+```
+
+3. Acesse GitHub Actions e aguarde a compilação. O artefato terá o nome `Morumba-Lanches-Funcional-APK`.
+
+## Build local web
+
+```bash
+npm install
+npm run build
+```
+
+Para compilar Android localmente é necessário Android SDK/Java configurados. O fluxo recomendado deste projeto é o GitHub Actions.

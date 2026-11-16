@@ -1,13 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ShoppingBag, Plus, Minus, Trash2, CreditCard, QrCode, Banknote,
   CheckCircle2, Clock, MapPin, Search, X, ChevronRight, Copy, Check,
-  Flame, Sparkles, Code2
+  Flame, Sparkles, Code2, Settings, ClipboardList, Package, LogOut, Phone,
+  Pencil, Trash, CheckCircle, CircleDollarSign,
 } from 'lucide-react';
 import { CATEGORIES, MENU_ITEMS, BORDERS } from './data/menuData';
 
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('lanches');
+  const [menuItems, setMenuItems] = useState(() => { try { return JSON.parse(localStorage.getItem('morumba_menu_v1')) || MENU_ITEMS; } catch { return MENU_ITEMS; } });
+  const [orders, setOrders] = useState(() => { try { return JSON.parse(localStorage.getItem('morumba_orders_v1')) || []; } catch { return []; } });
+  const [adminMode, setAdminMode] = useState(false);
+  const [adminAuthed, setAdminAuthed] = useState(false);
+  const [adminTab, setAdminTab] = useState('orders');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [productDraft, setProductDraft] = useState({ name: '', price: '', description: '', category: 'lanches', image: '' });
+  const [editingProductId, setEditingProductId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -27,15 +36,18 @@ export default function App() {
 
   const deliveryFee = 0; // Taxa de entrega ainda não informada pela lanchonete.
 
+  useEffect(() => { localStorage.setItem('morumba_menu_v1', JSON.stringify(menuItems)); }, [menuItems]);
+  useEffect(() => { localStorage.setItem('morumba_orders_v1', JSON.stringify(orders)); }, [orders]);
+
   const filteredItems = useMemo(() => {
-    return MENU_ITEMS.filter((item) => {
+    return menuItems.filter((item) => item.active !== false).filter((item) => {
       const matchesCategory = searchQuery.trim() !== '' ? true : item.category === selectedCategory;
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [menuItems, selectedCategory, searchQuery]);
 
   const handleOpenItem = (item) => {
     addToCart(item, null, '');
@@ -119,12 +131,19 @@ export default function App() {
       return;
     }
 
-    setCheckoutStep('processing');
-    setTimeout(() => {
-      setOrderNumber(Math.floor(1000 + Math.random() * 9000));
-      setCheckoutStep('success');
-      setCart([]);
-    }, 1500);
+    const number = Date.now().toString().slice(-6);
+    const order = {
+      id: `M${number}`, number, createdAt: new Date().toISOString(),
+      customerName: customerName.trim(), address: deliveryType === 'delivery' ? address.trim() : 'Retirada no balcão',
+      deliveryType, paymentMethod, changeFor, items: cart.map(item => ({ ...item })),
+      subtotal, deliveryFee, total, status: 'Novo', paymentStatus: 'Pendente (demonstração)'
+    };
+    const nextOrders = [order, ...orders];
+    setOrders(nextOrders);
+    localStorage.setItem('morumba_orders_v1', JSON.stringify(nextOrders));
+    setOrderNumber(number);
+    setCheckoutStep('success');
+    setCart([]);
   };
 
   const resetAndCloseCart = () => {
@@ -133,6 +152,35 @@ export default function App() {
       setCheckoutStep('cart');
     }, 300);
   };
+
+  const openAdmin = () => { setAdminPassword(''); setAdminMode(true); setAdminAuthed(false); };
+  const saveProduct = () => {
+    if (!productDraft.name.trim() || !Number(productDraft.price)) { alert('Informe nome e preço válido.'); return; }
+    const product = { ...productDraft, id: editingProductId || `custom-${Date.now()}`, price: Number(productDraft.price), image: productDraft.image || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=700&q=85', active: true };
+    setMenuItems(prev => editingProductId ? prev.map(item => item.id === editingProductId ? product : item) : [...prev, product]);
+    setProductDraft({ name: '', price: '', description: '', category: 'lanches', image: '' }); setEditingProductId(null);
+    alert('Produto salvo neste aparelho.');
+  };
+  const editProduct = (item) => { setEditingProductId(item.id); setProductDraft({ name: item.name, price: String(item.price), description: item.description, category: item.category, image: item.image }); window.scrollTo(0,0); };
+  const updateOrderStatus = (id, status) => setOrders(prev => prev.map(order => order.id === id ? { ...order, status } : order));
+  const deleteProduct = (id) => { if (confirm('Excluir este produto?')) setMenuItems(prev => prev.filter(item => item.id !== id)); };
+  const whatsappOrder = (order) => {
+    const lines = [`*Pedido ${order.id} - MORUMBA LANCHES*`, `Cliente: ${order.customerName}`, `Recebimento: ${order.deliveryType === 'delivery' ? 'Entrega' : 'Retirada'}`, `Endereço: ${order.address}`, '', ...order.items.map(i => `${i.quantity}x ${i.name} - ${formatPrice(i.unitPrice * i.quantity)}${i.observation ? ` (${i.observation})` : ''}`), '', `Pagamento: ${order.paymentMethod === 'pix' ? 'PIX (demonstrativo)' : order.paymentMethod === 'credit' ? 'Cartão (demonstrativo)' : 'Dinheiro'}`, `TOTAL: ${formatPrice(order.total)}`];
+    window.open(`https://wa.me/5519992625518?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
+  };
+
+  if (adminMode) return (
+    <div className="min-h-screen bg-zinc-950 text-white p-4 pb-10 max-w-md mx-auto">
+      <div className="flex items-center justify-between mb-6"><div><p className="text-red-400 text-xs font-bold tracking-widest">MORUMBA LANCHES</p><h1 className="text-2xl font-black">Painel administrativo</h1></div><button onClick={() => { setAdminMode(false); setAdminAuthed(false); }} className="p-2 rounded-xl bg-zinc-800"><X/></button></div>
+      {!adminAuthed ? <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 mt-10"><Settings className="text-red-500 w-10 h-10 mb-3"/><h2 className="font-bold text-lg">Acesso do proprietário</h2><p className="text-zinc-400 text-xs my-2">Senha inicial de demonstração: 1234. Altere no código antes de entregar ao cliente.</p><input type="password" value={adminPassword} onChange={e=>setAdminPassword(e.target.value)} placeholder="Senha administrativa" className="w-full rounded-xl p-3 text-zinc-900 my-3"/><button onClick={()=>adminPassword === '1234' ? setAdminAuthed(true) : alert('Senha incorreta.')} className="w-full bg-red-700 rounded-xl p-3 font-bold">Entrar no painel</button></div> : <>
+        <div className="grid grid-cols-2 gap-2 mb-4"><div className="bg-zinc-900 p-3 rounded-xl"><p className="text-zinc-400 text-xs">Pedidos</p><strong className="text-2xl">{orders.length}</strong></div><div className="bg-zinc-900 p-3 rounded-xl"><p className="text-zinc-400 text-xs">Produtos ativos</p><strong className="text-2xl">{menuItems.filter(x=>x.active!==false).length}</strong></div></div>
+        <div className="flex gap-2 mb-4"><button onClick={()=>setAdminTab('orders')} className={`flex-1 p-3 rounded-xl font-bold text-sm ${adminTab==='orders'?'bg-red-700':'bg-zinc-800'}`}><ClipboardList className="inline w-4 h-4 mr-1"/> Pedidos</button><button onClick={()=>setAdminTab('products')} className={`flex-1 p-3 rounded-xl font-bold text-sm ${adminTab==='products'?'bg-red-700':'bg-zinc-800'}`}><Package className="inline w-4 h-4 mr-1"/> Produtos</button></div>
+        {adminTab==='orders' ? <div className="space-y-3">{orders.length===0 ? <div className="text-center text-zinc-400 py-12 bg-zinc-900 rounded-2xl">Nenhum pedido ainda. Faça um pedido na área do cliente para testar.</div> : orders.map(order=><div key={order.id} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4"><div className="flex justify-between gap-2"><div><p className="text-red-400 font-black">{order.id}</p><h3 className="font-bold">{order.customerName}</h3><p className="text-xs text-zinc-400">{new Date(order.createdAt).toLocaleString('pt-BR')}</p></div><strong>{formatPrice(order.total)}</strong></div><div className="text-sm text-zinc-300 my-3">{order.items.map((i,idx)=><p key={idx}>{i.quantity}x {i.name}</p>)}</div><p className="text-xs text-zinc-400 mb-2">{order.address} • {order.paymentMethod==='pix'?'PIX demonstrativo':order.paymentMethod==='credit'?'Cartão demonstrativo':'Dinheiro'}</p><select value={order.status} onChange={e=>updateOrderStatus(order.id,e.target.value)} className="w-full bg-zinc-800 rounded-lg p-2 text-sm mb-2">{['Novo','Aceito','Em preparo','Saiu para entrega','Pronto para retirada','Concluído','Cancelado'].map(s=><option key={s}>{s}</option>)}</select><button onClick={()=>whatsappOrder(order)} className="w-full bg-green-700 rounded-lg p-2 text-sm font-bold"><Phone className="inline w-4 h-4 mr-1"/> Enviar pedido pelo WhatsApp</button></div>)}</div> : <div className="space-y-3"><div className="bg-zinc-900 rounded-2xl p-4 space-y-2"><h3 className="font-bold">{editingProductId?'Editar produto':'Novo produto'}</h3><input value={productDraft.name} onChange={e=>setProductDraft({...productDraft,name:e.target.value})} placeholder="Nome do produto" className="w-full p-3 rounded-lg text-zinc-900"/><input value={productDraft.price} onChange={e=>setProductDraft({...productDraft,price:e.target.value})} type="number" step="0.01" placeholder="Preço (ex.: 25.90)" className="w-full p-3 rounded-lg text-zinc-900"/><input value={productDraft.description} onChange={e=>setProductDraft({...productDraft,description:e.target.value})} placeholder="Descrição" className="w-full p-3 rounded-lg text-zinc-900"/><select value={productDraft.category} onChange={e=>setProductDraft({...productDraft,category:e.target.value})} className="w-full p-3 rounded-lg text-zinc-900">{CATEGORIES.map(c=><option value={c.id} key={c.id}>{c.name}</option>)}</select><input value={productDraft.image} onChange={e=>setProductDraft({...productDraft,image:e.target.value})} placeholder="URL da imagem (opcional)" className="w-full p-3 rounded-lg text-zinc-900"/><button onClick={saveProduct} className="w-full bg-red-700 p-3 rounded-xl font-bold">Salvar produto</button>{editingProductId&&<button onClick={()=>{setEditingProductId(null);setProductDraft({name:'',price:'',description:'',category:'lanches',image:''});}} className="w-full bg-zinc-700 p-2 rounded-xl">Cancelar edição</button>}</div><div className="space-y-2">{menuItems.map(item=><div key={item.id} className="bg-zinc-900 rounded-xl p-3 flex gap-3 items-center"><img src={item.image} className="w-14 h-14 rounded-lg object-cover"/><div className="flex-1 min-w-0"><p className="font-bold text-sm">{item.name}</p><p className="text-red-400 text-xs">{formatPrice(item.price)}</p></div><button onClick={()=>editProduct(item)} className="p-2 bg-zinc-800 rounded-lg"><Pencil size={16}/></button><button onClick={()=>deleteProduct(item.id)} className="p-2 bg-zinc-800 rounded-lg text-red-400"><Trash size={16}/></button></div>)}</div></div>}
+        <button onClick={()=>setAdminAuthed(false)} className="w-full mt-5 p-3 bg-zinc-800 rounded-xl text-sm"><LogOut className="inline w-4 h-4 mr-1"/> Sair do painel</button>
+      </>}
+      <p className="text-center text-[10px] text-zinc-500 mt-8">Dados salvos somente neste aparelho • Kinex Desenvolvimento</p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen pb-28 max-w-md mx-auto bg-stone-50 shadow-xl relative flex flex-col">
@@ -143,6 +191,7 @@ export default function App() {
             <strong className="text-white">KINEX</strong> DESENVOLVIMENTO
           </span>
         </div>
+        <button onClick={openAdmin} className="text-[10px] font-bold text-white/80 underline underline-offset-2 mr-2">Painel</button>
         <span className="bg-amber-400/15 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
           Modo Demonstração
         </span>
@@ -410,7 +459,7 @@ export default function App() {
                 <h3 className="font-extrabold text-lg text-stone-800 leading-tight">
                   {checkoutStep === 'cart' && 'Sua Sacola'}
                   {checkoutStep === 'payment' && 'Pagamento pelo App'}
-                  {checkoutStep === 'processing' && 'Processando Pagamento'}
+                  {checkoutStep === 'processing' && 'Registrando Pedido'}
                   {checkoutStep === 'success' && 'Pedido Confirmado!'}
                 </h3>
                 <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
@@ -580,7 +629,7 @@ export default function App() {
                             : 'border-stone-200 text-stone-600'
                         }`}
                       >
-                        <QrCode className="w-5 h-5" /> PIX Instantâneo
+                        <QrCode className="w-5 h-5" /> PIX (teste)
                       </button>
                       <button
                         onClick={() => setPaymentMethod('credit')}
@@ -608,7 +657,7 @@ export default function App() {
                   {paymentMethod === 'pix' && (
                     <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 text-center space-y-3">
                       <p className="text-xs font-semibold text-emerald-900">
-                        Pagamento demonstrativo. Não realize transferência; o código PIX abaixo é fictício. Valor simulado:{' '}
+                        PIX de demonstração: não é possível pagar por este código. O pedido será salvo localmente. Valor simulado:{' '}
                         <strong>{formatPrice(total)}</strong>
                       </p>
                       <div className="bg-white p-3 rounded-xl inline-block shadow-sm border border-emerald-100">
@@ -658,7 +707,7 @@ export default function App() {
               {checkoutStep === 'processing' && (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
                   <div className="w-12 h-12 border-4 border-red-700 border-t-transparent rounded-full animate-spin mb-4" />
-                  <p className="font-bold text-stone-800">Concluindo demonstração...</p>
+                  <p className="font-bold text-stone-800">Registrando pedido no aparelho...</p>
                   <p className="text-xs text-stone-400 mt-1">
                     Nenhuma cobrança real será realizada.
                   </p>
@@ -676,7 +725,7 @@ export default function App() {
                       Pedido de demonstração, {customerName}!
                     </h4>
                     <p className="text-xs text-stone-500 mt-1 max-w-xs mx-auto">
-                      Pedido de demonstração registrado nesta tela. Prazo e disponibilidade devem ser confirmados diretamente com a lanchonete.
+                      Pedido salvo neste aparelho. Para encaminhar à lanchonete, toque no botão de WhatsApp abaixo. O pagamento continua sendo demonstrativo.
                     </p>
                   </div>
                   <div className="bg-stone-50 p-4 rounded-2xl text-left text-xs space-y-1.5 border border-stone-100">
@@ -693,6 +742,7 @@ export default function App() {
                       {deliveryType === 'delivery' ? `Entrega em: ${address}` : 'Retirada no Balcão'}
                     </p>
                   </div>
+                  <button onClick={() => { const saved = orders.find(o => o.number === orderNumber); if (saved) whatsappOrder(saved); }} className="w-full bg-green-600 text-white font-bold rounded-xl py-3">Enviar pedido pelo WhatsApp</button>
                   <p className="text-[11px] text-stone-400 pt-2">
                     Sistema desenvolvido por <strong className="text-stone-600">Kinex Desenvolvimento</strong>
                   </p>
@@ -723,7 +773,7 @@ export default function App() {
                   onClick={handleFinishOrder}
                   className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-md"
                 >
-                  Confirmar e Pagar {formatPrice(total)}
+                  Registrar pedido {formatPrice(total)}
                 </button>
               </div>
             )}

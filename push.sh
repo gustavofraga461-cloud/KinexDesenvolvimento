@@ -19,6 +19,7 @@ fi
 git config user.name "Kinex Desenvolvimento"
 git config user.email "kinex-build@users.noreply.github.com"
 
+git branch -M main
 git add .
 echo "📝 Mensagem do commit (Enter para usar a padrão):"
 read -r MSG
